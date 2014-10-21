@@ -21,6 +21,9 @@ logger.setLevel(logging.INFO)
 logger.propagate = False
 logger.info("Starting Program")
 
+used_sec = 0
+validation_sec = 10
+
 #black backgroud left transparent during development
 BACKGROUND = (0.0,0.0,0.0,1.0)
 
@@ -80,7 +83,7 @@ while DISPLAY.loop_running():
 
     sec = time.localtime(time.time()).tm_sec
     if(sec % validation_sec == 0 and sec != used_sec):
-        wii = validate_connection(wii)
+        wii.validate_connection()
         used_sec = sec
 
     buttons = wii.wiimote.state['buttons']
