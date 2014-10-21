@@ -8,6 +8,8 @@ import logging
 import os
 import random
 
+print('Starting Patronus')
+
 wii = Wiimote()
 wii.connect_wiimote()
 wii.connection_fun()
@@ -104,11 +106,9 @@ while DISPLAY.loop_running():
             working = 1
             fade_in(curr_image)
             working = 0
-    #    if (buttons & cwiid.BTN_HOME):
-    #        logger.info("Exit")
-    #        DISPLAY.destroy()
-    #        break
-
+        if (buttons & cwiid.BTN_HOME):
+            logger.info("Exit")
+            DISPLAY.destroy()
+            break
     except AttributeError:
-        #don't care - keep going
-
+	logger.info("Error!")

@@ -25,8 +25,7 @@ class Wiimote:
 		try:
 			self.wiimote.request_status()
 		except RuntimeError:
-			self.wiimote = self.connect_wiimote()
-		time.sleep(1)
+			self.connect_wiimote()
 
 	def connection_fun(self):
 		time.sleep(1)
