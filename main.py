@@ -80,31 +80,35 @@ def fade_out(image):
 
 #main program loop          
 while DISPLAY.loop_running():
+    try:
+        sec = time.localtime(time.time()).tm_sec
+        if(sec % validation_sec == 0 and sec != used_sec):
+            wii.validate_connection()
+            used_sec = sec
 
-    sec = time.localtime(time.time()).tm_sec
-    if(sec % validation_sec == 0 and sec != used_sec):
-        wii.validate_connection()
-        used_sec = sec
+        buttons = wii.wiimote.state['buttons']
 
-    buttons = wii.wiimote.state['buttons']
+        if (buttons & cwiid.BTN_A) and working == 0 and image_displayed == 0:
+            image_displayed = 1
+            working = 1
+            curr_image = random.choice(images)
+            fade_in(curr_image)
+            working = 0
+        if (buttons & cwiid.BTN_B) and working == 0 and image_displayed == 1: 
+            working = 1
+            fade_out(curr_image)
+            working = 0
+            image_displayed = 0
+        if (buttons & cwiid.BTN_1) and working == 0 and image_displayed == 0:
+            image_displayed = 1
+            working = 1
+            fade_in(curr_image)
+            working = 0
+    #    if (buttons & cwiid.BTN_HOME):
+    #        logger.info("Exit")
+    #        DISPLAY.destroy()
+    #        break
 
-    if (buttons & cwiid.BTN_A) and working == 0 and image_displayed == 0:
-        image_displayed = 1
-        working = 1
-        curr_image = random.choice(images)
-        fade_in(curr_image)
-        working = 0
-    if (buttons & cwiid.BTN_B) and working == 0 and image_displayed == 1: 
-        working = 1
-        fade_out(curr_image)
-        working = 0
-        image_displayed = 0
-    if (buttons & cwiid.BTN_1) and working == 0 and image_displayed == 0:
-        image_displayed = 1
-        working = 1
-        fade_in(curr_image)
-        working = 0
-#    if (buttons & cwiid.BTN_HOME):
-#        logger.info("Exit")
-#        DISPLAY.destroy()
-#        break
+    except AttributeError:
+        #don't care - keep going
+
