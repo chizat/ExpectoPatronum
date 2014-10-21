@@ -1,10 +1,16 @@
 #!/usr/bin/python
-from __future__ import absolute_import, division, print_function, unicode_literals
+from wiimote import Wiimote
+import cwiid
+
 from time import sleep
 import pi3d
 import logging
 import os
 import random
+
+wii = Wiimote()
+wii.connect_wiimote()
+wii.connection_fun()
 
 logger = logging.getLogger('patronus')
 hdlr = logging.FileHandler('patronus.log')
@@ -37,13 +43,9 @@ for file in os.listdir(img_dir):
 	images.append(pi3d.ImageSprite(img_dir + "/" + file, shader, w = 20, h = 15));
 logger.info("Images loaded")
 
-#allow keyboard input (temporary final product with use the GPIO  header)
-mykeys = pi3d.Keyboard()
-
 image_displayed = 0
 working = 0
 
-#this funtion fades the skull image onto the screen
 def fade_in(image):
     logger.info("Fade In")
     alpha = 0
@@ -69,28 +71,25 @@ def fade_out(image):
     logger.info("Fade Out End")
 
 #main program loop          
-action = 0
 while True:
-    action = mykeys.read()
-    logger.info(action)
-    if action == 32 and working == 0 and image_displayed == 0: #s for skull
-	logger.info("Space for face in")
-	image_displayed = 1
-	working = 1
-	curr_image = random.choice(images)
+
+    buttons = wii.wiimote.state['buttons']
+
+    if (buttons & cwiid.BTN_A) and working == 0 and image_displayed == 0:
+        logger.info("Button for fade in")
+        image_displayed = 1
+        working = 1
+        curr_image = random.choice(images)
         fade_in(curr_image)
-	working = 0
-        action = 0
-    if action == 32 and working == 0 and image_displayed == 1: #space
-	logger.info("Space for face out")
-	working = 1
+        working = 0
+    if (buttons & cwiid.BTN_A) and working == 0 and image_displayed == 1: #space
+        logger.info("Button for fade out")
+        working = 1
         fade_out(curr_image)
-	working = 0
-	image_displayed = 0
-        action = 0
-    if action == 27: #esc for exit
-        action = 0
-        mykeys.close()
+        working = 0
+        image_displayed = 0
+    if (buttons & cwiid.BTN_HOME):
+        logger.info("Exit")
         DISPLAY.destroy()
         break
 
