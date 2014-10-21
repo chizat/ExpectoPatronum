@@ -1,8 +1,8 @@
 #!/usr/bin/python
 from wiimote import Wiimote
 import cwiid
+import time
 
-from time import sleep
 import pi3d
 import logging
 import os
@@ -30,7 +30,8 @@ DISPLAY = pi3d.Display.create(background=BACKGROUND,x=0, y=0, frames_per_second=
 #not a clue what this does
 shader = pi3d.Shader("uv_flat")
 
-alpha_step = 0.01
+alpha_step_in = 0.01
+alpha_step_out = 0.02
 
 #set up sprites for each image
 img_dir = "images"
@@ -47,50 +48,55 @@ image_displayed = 0
 working = 0
 
 def fade_in(image):
+    DISPLAY.add_sprites(image)
+    start = time.clock();
     logger.info("Fade In")
     alpha = 0
     while DISPLAY.loop_running():
         image.set_alpha(alpha)
         image.draw()
-        alpha = (alpha + alpha_step)
+        alpha = (alpha + alpha_step_in)
         if alpha > 1.01:
             break
-    logger.info("Fade In End")
+    end = time.clock()
+    logger.info("Fade In End " + repr(end - start))
 
 def fade_out(image):
+    start = time.clock();
     logger.info("Fade Out")
     alpha = 1
     while DISPLAY.loop_running():
         image.set_alpha(alpha)
         image.draw()
-        alpha = (alpha - alpha_step)
+        alpha = (alpha - alpha_step_out)
         if alpha < 0:
 	    break
-    image.set_alpha(-1)
-    image.draw()
-    logger.info("Fade Out End")
+    end = time.clock()
+    DISPLAY.remove_sprites(image)
+    logger.info("Fade Out End " + repr(end - start))
 
 #main program loop          
-while True:
+while DISPLAY.loop_running():
 
     buttons = wii.wiimote.state['buttons']
 
     if (buttons & cwiid.BTN_A) and working == 0 and image_displayed == 0:
-        logger.info("Button for fade in")
         image_displayed = 1
         working = 1
         curr_image = random.choice(images)
         fade_in(curr_image)
         working = 0
-    if (buttons & cwiid.BTN_A) and working == 0 and image_displayed == 1: #space
-        logger.info("Button for fade out")
+    if (buttons & cwiid.BTN_B) and working == 0 and image_displayed == 1: 
         working = 1
         fade_out(curr_image)
         working = 0
         image_displayed = 0
-    if (buttons & cwiid.BTN_HOME):
-        logger.info("Exit")
-        DISPLAY.destroy()
-        break
-
-
+    if (buttons & cwiid.BTN_1) and working == 0 and image_displayed == 0:
+        image_displayed = 1
+        working = 1
+        fade_in(curr_image)
+        working = 0
+#    if (buttons & cwiid.BTN_HOME):
+#        logger.info("Exit")
+#        DISPLAY.destroy()
+#        break
