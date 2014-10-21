@@ -10,7 +10,6 @@ class Wiimote:
 	
 	def connect(self):
 		try:
-			print 'Press 1 + 2 on your Wii Remote now ...'
 			time.sleep(1)
 			self.wiimote = cwiid.Wiimote()
 		except RuntimeError:
@@ -19,7 +18,6 @@ class Wiimote:
 	def connect_wiimote(self):
 		self.connect()
 
-		print 'Wii Remote connected...\n'
 		self.wiimote.led = 6
 		self.wiimote.rpt_mode = cwiid.RPT_BTN
 
@@ -27,7 +25,6 @@ class Wiimote:
 		try:
 			self.wiimote.request_status()
 		except RuntimeError:
-			print "Disconnected - reconnecting"
 			self.wiimote = connect_wiimote()
 
 	def connection_fun(self):

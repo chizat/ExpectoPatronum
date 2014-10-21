@@ -78,6 +78,11 @@ def fade_out(image):
 #main program loop          
 while DISPLAY.loop_running():
 
+    sec = time.localtime(time.time()).tm_sec
+    if(sec % validation_sec == 0 and sec != used_sec):
+        wii = validate_connection(wii)
+        used_sec = sec
+
     buttons = wii.wiimote.state['buttons']
 
     if (buttons & cwiid.BTN_A) and working == 0 and image_displayed == 0:
