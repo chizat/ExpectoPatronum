@@ -10,10 +10,6 @@ import random
 
 print('Starting Patronus')
 
-wii = Wiimote()
-wii.connect_wiimote()
-wii.connection_fun()
-
 logger = logging.getLogger('patronus')
 hdlr = logging.FileHandler('patronus.log')
 formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
@@ -22,6 +18,10 @@ logger.addHandler(hdlr)
 logger.setLevel(logging.INFO)
 logger.propagate = False
 logger.info("Starting Program")
+
+wii = Wiimote()
+wii.connect_wiimote()
+wii.connection_fun()
 
 used_sec = 0
 validation_sec = 10
@@ -35,8 +35,7 @@ DISPLAY = pi3d.Display.create(background=BACKGROUND,x=0, y=0, frames_per_second=
 #not a clue what this does
 shader = pi3d.Shader("uv_flat")
 
-alpha_step_in = 0.01
-alpha_step_out = 0.02
+alpha_step_out = 0.03
 
 #set up sprites for each image
 img_dir = "images"
@@ -57,10 +56,13 @@ def fade_in(image):
     start = time.clock();
     logger.info("Fade In")
     alpha = 0
+    X = 1
     while DISPLAY.loop_running():
+	increment = 0.005*2**((2*(-1 + X))/9.)*5**((-1 + X)/9.)
         image.set_alpha(alpha)
         image.draw()
-        alpha = (alpha + alpha_step_in)
+        alpha = (alpha + increment)
+	X = X + 0.2 
         if alpha > 1.01:
             break
     end = time.clock()
