@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#/usr/bin/python
 from wiimote import Wiimote
 import cwiid
 import time
@@ -108,9 +108,9 @@ while DISPLAY.loop_running():
             working = 1
             fade_in(curr_image)
             working = 0
-        if (buttons & cwiid.BTN_HOME):
-            logger.info("Exit")
-            DISPLAY.destroy()
-            break
+#        if (buttons & cwiid.BTN_HOME):
+#            logger.info("Exit")
+#            DISPLAY.destroy()
+#            break
     except AttributeError:
 	logger.info("Error!")
