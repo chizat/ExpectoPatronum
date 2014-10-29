@@ -13,3 +13,8 @@ Use:
   7. Student points wand into the darkness and says spell for the second time
   8. Same Patronus shows in darkness - (Wandmaker pushes specific button to make same patronus display)
   9. Student leaves happy.
+
+Hardware
+* Raspberry Pi
+* Wiimote
+* Projector 
